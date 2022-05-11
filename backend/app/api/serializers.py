@@ -123,21 +123,11 @@ class RecipeSerializer(serializers.ModelSerializer):
                     'tags': 'Тэги должны быть уникальными!'
                 })
             tags_list.append(tag)
-
-        cooking_time = data['cooking_time']
-        if int(cooking_time) <= 0:
-            raise serializers.ValidationError({
-                'cooking_time': 'Время приготовления должно быть больше 0!'
-            })
         return data
 
     @staticmethod
-    def create_ingredients(ingredients, recipe):
-        for ingredient in ingredients:
-            QuantityIngredient.objects.create(
-                recipe=recipe, ingredient=ingredient['id'],
-                amount=ingredient['amount']
-            )
+    def create_ingredients(ingredients):
+        Ingredient.objects.bulk_create[ingredients]
 
     @staticmethod
     def create_tags(tags, recipe):

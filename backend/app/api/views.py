@@ -53,12 +53,11 @@ class RecipeViewSet(ModelViewSet):
     @staticmethod
     def delete_method_for_actions(request, pk, model):
         user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
-        model_obj = get_object_or_404(model, user=user, recipe=recipe)
+        model_obj = model.objects.filter(user=user, recipe=pk)
         model_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=["POST"],
+    @action(detail=True, methods=['POST'],
             permission_classes=[IsAuthenticated])
     def favorite(self, request, pk):
         return self.post_method_for_actions(
@@ -69,7 +68,7 @@ class RecipeViewSet(ModelViewSet):
         return self.delete_method_for_actions(
             request=request, pk=pk, model=Favorite)
 
-    @action(detail=True, methods=["POST"],
+    @action(detail=True, methods=['POST'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk):
         return self.post_method_for_actions(

@@ -22,7 +22,15 @@ class Subscribe(models.Model):
         related_name='following',
         verbose_name='Автор'
     )
-
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique follow',
+            )
+        ]
 
 class Ingredient(models.Model):
     """Model Ingredient."""
@@ -77,7 +85,9 @@ class Recipe(CreatedModel):
         blank=False
         )
     cooking_time = models.IntegerField(
-        verbose_name='Время приготовления в минутах'
+        verbose_name='Время приготовления в минутах',
+        validators=MinValueValidator(
+            1, 'Минимальное время приготовления 1 минута!')
         )
 
     def __str__(self):
