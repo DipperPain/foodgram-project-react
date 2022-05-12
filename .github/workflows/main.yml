@@ -63,19 +63,21 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            rm .env
+            sudo docker pull ${{ DOCKER_USERNAME }}/foodgram_backend:latest
+            sudo docker-compose stop
+            sudo docker-compose rm backend
             touch .env
-            echo SECRET_KEY='${{ secrets.SECRET_KEY }}' >> .env  
-            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env 
-            echo DB_NAME=${{ secrets.DB_NAME }} >> .env 
-            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env 
+            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+            echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            sudo docker-compose up -d --build
-            sudo docker-compose exec -T dipperpain_backend_1 python manage.py makemigrations
-            sudo docker-compose exec -T dipperpain_backend_1 python manage.py migrate
-            sudo docker-compose exec -T dipperpain_backend_1 python manage.py collectstatic
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+            sudo docker-compose up -d
+            sudo docker-compose exec -T backend python manage.py makemigrations --noinput
+            sudo docker-compose exec -T backend python manage.py migrate --noinput
+            sudo docker-compose exec -T backend python manage.py collectstatic --no-input
             
   telegram_message:
     name: Send telegram message
