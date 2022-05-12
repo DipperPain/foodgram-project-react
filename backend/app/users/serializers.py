@@ -1,17 +1,12 @@
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Avg, IntegerField
-from rest_framework import exceptions, serializers
+from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from djoser.serializers import UserCreateSerializer
-from drf_extra_fields.fields import Base64ImageField
 from users.models import User
-from recipes.models import (Cart, Favorite, Ingredient,
-                            Recipe, Subscribe, Tag)
-
+from recipes.models import Subscribe
 from app.settings import (
-    MESSAGE_FOR_RESERVED_NAME, MESSAGE_FOR_USER_NOT_FOUND, RESERVED_NAME,
+    MESSAGE_FOR_RESERVED_NAME, RESERVED_NAME
 )
 
 
@@ -64,6 +59,7 @@ class CommonSubscribed(metaclass=serializers.SerializerMetaclass):
         else:
             return False
 
+
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
@@ -108,4 +104,3 @@ class RegistrationSerializer(UserCreateSerializer, CommonSubscribed):
         write_only_fields = ('password',)
         read_only_fields = ('id',)
         extra_kwargs = {'is_subscribed': {'required': False}}
-
