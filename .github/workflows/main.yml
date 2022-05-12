@@ -63,9 +63,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
-            sudo docker-compose stop
-            sudo docker container rm dipperpain_backend_1
+
             rm .env
             touch .env
             echo SECRET_KEY='${{ secrets.SECRET_KEY }}' >> .env  
@@ -78,9 +76,9 @@ jobs:
             sudo docker-compose up -d --build
             sudo docker-compose exec -T dipperpain_backend_1 python manage.py makemigrations
             sudo docker-compose exec -T dipperpain_backend_1 python manage.py migrate
-            sudo docker-compose exec -T dipperpain_backend_1 python manage.py createsuperuser
-            sudo docker-compose exec -T dipperpain_backend_1 python manage.py load_ingrs
-            sudo docker-compose exec -T dipperpain_backend_1 python manage.py load_tags
+            
+
+
             sudo docker-compose exec -T dipperpain_backend_1 python manage.py collectstatic --no-input
             
   telegram_message:
