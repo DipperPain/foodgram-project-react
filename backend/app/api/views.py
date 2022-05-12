@@ -1,4 +1,3 @@
-
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from recipes.models import QuantityIngredient
 from django.http import HttpResponse

@@ -75,20 +75,17 @@ class Recipe(CreatedModel):
         through='QuantityIngredient',
         verbose_name='Ингридиенты',
         related_name='recipes',
-        blank=False
-        )
+        blank=False)
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Тэги',
         related_name='tags',
-        blank=False
-        )
+        blank=False)
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления в минутах',
         validators=[MinValueValidator(
             limit_value=1,
-            message='Минимальное время приготовления 1 минута!')]
-        )
+            message='Минимальное время приготовления 1 минута!')])
 
     def __str__(self):
         return self.text[:15]
