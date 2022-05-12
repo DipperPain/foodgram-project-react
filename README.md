@@ -1,4 +1,5 @@
 # Итоговый проект FOODGRAM
+![example workflow](https://github.com/DipperPain/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 ## Социальная сеть для обмена рецептами и удобного составления списка покупок
 ### Подготовка и запуск проекта
 # git clone https://github.com/DipperPain/foodgram-project-react.git
