@@ -1,8 +1,5 @@
-import datetime
-
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
-from django.forms import ModelChoiceField
 from core.models import CreatedModel
 from users.models import User
 
@@ -22,6 +19,7 @@ class Subscribe(models.Model):
         related_name='following',
         verbose_name='Автор'
     )
+
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
@@ -31,6 +29,7 @@ class Subscribe(models.Model):
                 name='unique follow',
             )
         ]
+
 
 class Ingredient(models.Model):
     """Model Ingredient."""
@@ -94,6 +93,7 @@ class Recipe(CreatedModel):
     def __str__(self):
         return self.text[:15]
 
+
 class QuantityIngredient(models.Model):
     """Table for quantity ingredient."""
     ingredient = models.ForeignKey(
@@ -109,6 +109,7 @@ class QuantityIngredient(models.Model):
     quantity = models.IntegerField(
         verbose_name='Количество ингридиентов'
     )
+
 
 class Favorite(models.Model):
     """Favorite recipes."""
