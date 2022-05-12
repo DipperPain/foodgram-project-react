@@ -2,8 +2,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.models import (
-    Tag, Recipe, Ingredient, QuantityIngredient, Cart, Favorite
-    )
+    Tag, Recipe, Ingredient, QuantityIngredient, Cart, Favorite)
 
 from users.serializers import UserSerializer
 
@@ -52,7 +51,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_ingredients(self, obj):
-        queryset =  QuantityIngredient.objects.filter(recipe=obj)
+        queryset = QuantityIngredient.objects.filter(recipe=obj)
         return QuantityIngredientSerializer(queryset, many=True).data
 
     def get_is_favorited(self, obj):
