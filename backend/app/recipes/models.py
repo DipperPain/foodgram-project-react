@@ -86,8 +86,9 @@ class Recipe(CreatedModel):
         )
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления в минутах',
-        validators=MinValueValidator(
-            1, 'Минимальное время приготовления 1 минута!')
+        validators=[MinValueValidator(
+            limit_value=1,
+            message='Минимальное время приготовления 1 минута!')]
         )
 
     def __str__(self):
