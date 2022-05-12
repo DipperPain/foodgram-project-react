@@ -9,7 +9,7 @@ class User(AbstractUser):
         ADMIN = "admin"
 
         @classmethod
-        def cls_choices(self):
+        def choices(self):
             return [
                 (getattr(self, k), getattr(self, k))
                 for k in self.__dict__.keys()
