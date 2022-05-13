@@ -73,11 +73,11 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d --build
-            sudo docker-compose run backend_1 python app/manage.py makemigrations
-            sudo docker-compose run backend_1 python app/manage.py migrate
-            sudo docker-compose run backend_1 python app/manage.py load_ingrs
-            sudo docker-compose run backend_1 python app/manage.py load_tags
-            sudo docker-compose run backend_1 python app/manage.py collectstatic --no-input
+            sudo docker-compose run backend python app/manage.py makemigrations
+            sudo docker-compose run backend python app/manage.py migrate
+            sudo docker-compose run backend python app/manage.py load_ingrs
+            sudo docker-compose run backend python app/manage.py load_tags
+            sudo docker-compose run backend python app/manage.py collectstatic --no-input
             
   telegram_message:
     name: Send telegram message
