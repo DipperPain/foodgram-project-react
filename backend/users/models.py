@@ -27,6 +27,9 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
 
+    class Meta:
+        db_table = 'auth_user'
+
     @property
     def is_admin(self):
         return self.role == self.Role.ADMIN
