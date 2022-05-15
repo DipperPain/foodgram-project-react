@@ -3,8 +3,9 @@ from recipes.models import QuantityIngredient
 from django.http import HttpResponse
 from .serializers import (
     TagSerializer, RecipeSerializer,
-    RecipeListSerializer, FavoriteSerializer, CartSerializer)
-from recipes.models import Tag, Recipe, Favorite, Cart
+    RecipeListSerializer, FavoriteSerializer, CartSerializer, 
+    IngredientSerializer)
+from recipes.models import Tag, Recipe, Favorite, Cart, Ingredient
 from .filters import RecipeFilter
 
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -17,6 +18,7 @@ from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.decorators import action
 from .permissions import IsAuthorOrReadOnly
+from .filters import IngredientSearchFilter
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -24,6 +26,16 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = TagSerializer
+
+
+class IngredientViewSet(ModelViewSet):
+    """ViewSet for Ingredient"""
+    queryset = Ingredient.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = IngredientSerializer
+    filter_backends = (DjangoFilterBackend, IngredientSearchFilter)
+    pagination_class = None
+    search_fields = ['^name', ]
 
 
 class RecipeViewSet(ModelViewSet):

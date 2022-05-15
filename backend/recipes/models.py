@@ -4,33 +4,6 @@ from core.models import CreatedModel
 from users.models import User
 
 
-class Subscribe(models.Model):
-    """Model subscribe."""
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower',
-        verbose_name='Подписчик'
-    )
-
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='following',
-        verbose_name='Автор'
-    )
-
-    class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique follow',
-            )
-        ]
-
-
 class Ingredient(models.Model):
     """Model Ingredient."""
     name = models.CharField(max_length=200, unique=True)
