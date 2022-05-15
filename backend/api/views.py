@@ -3,7 +3,7 @@ from recipes.models import QuantityIngredient
 from django.http import HttpResponse
 from .serializers import (
     TagSerializer, RecipeSerializer,
-    RecipeListSerializer, FavoriteSerializer, CartSerializer, 
+    RecipeListSerializer, FavoriteSerializer, CartSerializer,
     IngredientSerializer)
 from recipes.models import Tag, Recipe, Favorite, Cart, Ingredient
 from .filters import RecipeFilter
