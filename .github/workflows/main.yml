@@ -68,6 +68,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-project
             sudo docker-compose down
             sudo docker-compose rm backend
+            y
             rm .env
             touch .env
             echo SECRET_KEY='${{ secrets.SECRET_KEY }}' >> .env  
