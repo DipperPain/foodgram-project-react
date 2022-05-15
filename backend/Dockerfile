@@ -8,4 +8,4 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD cd /foodgram/app && gunicorn app.wsgi:application --bind 0.0.0.0:8000 
+CMD gunicorn app.wsgi:application --bind 0.0.0.0:8000 
