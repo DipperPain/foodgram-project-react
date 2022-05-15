@@ -22,6 +22,13 @@ services:
     env_file:
       - ./.env
 
+
+
+  frontend:
+    image: dipperpain/foodgram_frontend:latest
+    volumes:
+      - ../frontend/:/foodgram/result_build/
+  
   nginx:
     image: nginx:1.19.3
     ports:
@@ -36,10 +43,7 @@ services:
     depends_on:
       - frontend
 
-  frontend:
-    image: dipperpain/foodgram_frontend:latest
-    volumes:
-      - ../frontend/:/foodgram/result_build/
+
 
 volumes:
   postgres_data:
