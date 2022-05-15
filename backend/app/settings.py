@@ -29,11 +29,10 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-
+AUTH_USER_MODEL = 'users.User'
 # Application definition
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'users',
     'recipes',
     'api',
 ]
@@ -186,7 +186,7 @@ EMAIL_FILE_PATH = os.path.join('sent_emails')
 DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 SEND_FROM_EMAIL = 'api@foodgram.ru'
 PAGINATOR_PAGE_ITEMS_COUNT = 10
-AUTH_USER_MODEL = 'users.User'
+
 RESERVED_NAME = 'me'
 MESSAGE_FOR_RESERVED_NAME = '"me" can not use'
 MESSAGE_FOR_USER_NOT_FOUND = 'user is nothing'
