@@ -83,6 +83,7 @@ jobs:
             sudo docker-compose run backend python app/manage.py load_ingrs
             sudo docker-compose run backend python app/manage.py load_tags
             sudo docker-compose run backend python app/manage.py collectstatic --no-input
+            
    
   telegram_message:
     name: Send telegram message
