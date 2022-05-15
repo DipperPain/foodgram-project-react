@@ -29,7 +29,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-AUTH_USER_MODEL = 'users.User'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'recipes',
     'api',
 ]
-
+AUTH_USER_MODEL = 'users.User'
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
