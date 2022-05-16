@@ -4,7 +4,6 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from djoser.serializers import UserCreateSerializer
 from users.models import User, Subscribe
-from recipes.models import Subscribe
 from app.settings import (
     MESSAGE_FOR_RESERVED_NAME, RESERVED_NAME
 )

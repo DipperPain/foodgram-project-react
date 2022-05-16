@@ -45,15 +45,15 @@ class Recipe(CreatedModel):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='QuantityIngredient',
-        verbose_name='Ингридиенты',
+        through='IngredientRecipe',
         related_name='recipes',
-        blank=False)
+        verbose_name='Продукты в рецепте',
+        help_text='Выберите продукты рецепта')
     tags = models.ManyToManyField(
         Tag,
-        verbose_name='Тэги',
-        related_name='tags',
-        blank=False)
+        through='TagRecipe',
+        verbose_name='Тег рецепта',
+        help_text='Выберите тег рецепта')
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления в минутах',
         validators=[MinValueValidator(
@@ -109,3 +109,71 @@ class Cart(models.Model):
         related_name='cart',
         verbose_name='Корзина'
     )
+
+
+class TagRecipe(models.Model):
+    """Tag for recipe."""
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE,
+        verbose_name='Теги',
+        help_text='Выберите теги рецепта'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт',
+        help_text='Выберите рецепт')
+
+    class Meta:
+        """
+        Мета параметры модели.
+        """
+        verbose_name = 'Теги рецепта'
+        verbose_name_plural = 'Теги рецепта'
+        constraints = [
+            models.UniqueConstraint(fields=['tag', 'recipe'],
+                                    name='unique_tagrecipe')
+        ]
+
+    def __str__(self):
+        """"
+        Метод строкового представления модели.
+        """
+        return f'{self.tag} {self.recipe}'
+
+
+class IngredientRecipe(models.Model):
+    """Ingredient for recipe."""
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredientrecipes',
+        verbose_name='Продукты рецепта',
+        help_text='Добавить продукты рецепта в корзину')
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ingredientrecipes',
+        verbose_name='Рецепт',
+        help_text='Выберите рецепт'
+    )
+    amount = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name='Количество продукта',
+        help_text='Введите количество продукта'
+    )
+
+    class Meta:
+
+        verbose_name = 'Продукты в рецепте'
+        verbose_name_plural = 'Продукты в рецепте'
+        constraints = [
+            models.UniqueConstraint(fields=['ingredient', 'recipe'],
+                                    name='unique_ingredientrecipe')
+        ]
+
+    def __str__(self):
+
+        return f'{self.ingredient} {self.recipe}'
