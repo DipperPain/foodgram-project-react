@@ -1,59 +1,49 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
-from django.utils.translation import gettext_lazy
 
 
 class User(AbstractUser):
-    class Role:
-        USER = "user"
-        ADMIN = "admin"
-
-        @classmethod
-        def choices(self):
-            return [
-                (getattr(self, k), getattr(self, k))
-                for k in self.__dict__.keys()
-                if isinstance(getattr(self, k), str) and "_" not in k
-            ]
-
-    username = models.CharField(max_length=150, unique=True)
-    email = models.EmailField(gettext_lazy("email address"), unique=True)
-    confirmation_code = models.CharField(max_length=60, blank=True)
-    first_name = models.TextField(max_length=300, blank=True)
-    last_name = models.TextField(max_length=300, blank=True)
-    role = models.CharField(
-        max_length=25, choices=Role.choices(), default=Role.USER
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r'^[\w.@+-]+$',
+                message='Логин должен содержать ТОЛЬКО:'
+                        ' буквы/цифры(с учетом регистра),'
+                        ' а также символы: .@+-',
+            ),
+        ]
     )
+    email = models.EmailField(max_length=254, unique=True)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    @property
-    def is_admin(self):
-        return self.role == self.Role.ADMIN
+    class Meta:
+        ordering = ['username']
+
+    def __str__(self):
+        return self.username
 
 
-class Subscribe(models.Model):
-    """Model subscribe."""
+class Follow(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower',
-        verbose_name='Подписчик'
+        User, on_delete=models.CASCADE, related_name='follower'
     )
-
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='following',
-        verbose_name='Автор'
+    following = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='following'
     )
 
     class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_follow',
-            )
-        ]
+                fields=['user', 'following'],
+                name='follow'
+            ),
+        )
+
+    def __str__(self):
+        return f'{self.username} follow for {self.following}'
