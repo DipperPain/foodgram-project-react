@@ -56,7 +56,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
         'user': 'users.serializers.UserSerializer',
-        'current_user': 'users.serializers.CurrentUserSerializer',
+        'current_user': 'djoser.serializers.UserSerializer',
     },
     'HIDE_USERS': False,
     'PERMISSIONS': {
