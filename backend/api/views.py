@@ -13,8 +13,9 @@ from .permissions import OwnerOrAdminOrSafeMethods
 from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
                           RecipeGetSerializer, RecipePostSerializer,
                           ShoppingCartSerializer, TagSerializer)
-from recipes.models import (AmountIngredientForRecipe, Favorite,
-                           Ingredient, Recipe, ShoppingCart, Tag)
+from recipes.models import (
+    AmountIngredientForRecipe, Favorite,
+    Ingredient, Recipe, ShoppingCart, Tag)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -65,7 +66,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, pk):
         return self.post_or_delete(
             request,
-            FavoriteRecipe,
+            Favorite,
             FavoriteRecipesSerializer,
             pk
         )
