@@ -18,22 +18,6 @@ class UserViewSet(UserViewSet):
     def get_queryset(self):
         return User.objects.all()
 
-    @action(
-        methods=['patch', 'get'],
-        permission_classes=[IsAuthenticated],
-        detail=False,
-        url_path='me',
-        url_name='me',
-    )
-    def me(self, request, *args, **kwargs):
-        user = self.request.user
-        serializer = UserSerializer(user)
-        if self.request.method == 'PATCH' and user.role != 'user':
-            serializer = UserSerializer(user, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        return Response(serializer.data)
-
 
 class SubscribeViewSet(ModelViewSet):
     """ Make subscribe."""
