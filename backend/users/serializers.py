@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+from rest_framework.serializers import SerializerMethodField
 from rest_framework.validators import UniqueValidator
 from djoser.serializers import UserCreateSerializer
 from users.models import User, Subscribe
@@ -106,17 +107,15 @@ class RegistrationSerializer(UserCreateSerializer, CommonSubscribed):
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = SerializerMethodField()
 
     class Meta:
         model = User
-        fields = (
-            'id',
-            'email',
-            'is_subscribed',
-            'username',
-            'first_name',
-            'last_name',
-            'password'
-        )
-        extra_kwargs = {"password": {'write_only': True}}
+        fields = ["id", "username", "email", "first_name", "last_name",
+                  "is_subscribed"]
+
+    def get_is_subscribed(self, obj):
+        user = self.context["request"].user
+        if user.is_anonymous:
+            return False
+        return User.objects.filter(user=user, follow_to=obj).exists()

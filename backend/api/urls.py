@@ -4,10 +4,10 @@ from .views import TagViewSet, RecipeViewSet, IngredientViewSet
 from users import views
 
 
-router = DefaultRouter()
-router.register(r'tags', TagViewSet)
-router.register(r'recipes', RecipeViewSet)
-router.register(r'ingredients', IngredientViewSet, basename='ingredients')
+router_1 = DefaultRouter()
+router_1.register(r'tags', TagViewSet)
+router_1.register(r'recipes', RecipeViewSet)
+router_1.register(r'ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
     path('users/subscriptions/',
@@ -16,5 +16,5 @@ urlpatterns = [
     path('users/<users_id>/subscribe/',
          views.SubscribeViewSet.as_view(
           {'post': 'create', 'delete': 'delete'}), name='subscribe'),
-    path('', include(router.urls)),
+    path('', include(router_1.urls)),
 ]
