@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from djoser.serializers import UserCreateSerializer
-from users.models import User
+from users.models import User, Subscribe
 from recipes.models import Subscribe
 from app.settings import (
     MESSAGE_FOR_RESERVED_NAME, RESERVED_NAME
@@ -104,3 +104,20 @@ class RegistrationSerializer(UserCreateSerializer, CommonSubscribed):
         write_only_fields = ('password',)
         read_only_fields = ('id',)
         extra_kwargs = {'is_subscribed': {'required': False}}
+
+
+class CurrentUserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'email',
+            'is_subscribed',
+            'username',
+            'first_name',
+            'last_name',
+            'password'
+        )
+        extra_kwargs = {"password": {'write_only': True}}
