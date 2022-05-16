@@ -7,6 +7,7 @@ from recipes.models import Ingredient, Tag
 
 class Command(BaseCommand):
     help = 'импорт  из директории: data'
+
     def handle(self, *args, **options):
         # import Ingredient model
         path = 'ingredients.csv'
