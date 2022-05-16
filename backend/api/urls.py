@@ -11,9 +11,10 @@ router.register(r'ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
     path('users/subscriptions/',
-         views.SubscribeViewSet.as_view({'get': 'list'}), name='subscriptions'),
+         views.SubscribeViewSet.as_view({'get': 'list'}),
+         name='subscriptions'),
     path('users/<users_id>/subscribe/',
-         views.SubscribeViewSet.as_view({'post': 'create',
-                                   'delete': 'delete'}), name='subscribe'),
+         views.SubscribeViewSet.as_view(
+          {'post': 'create', 'delete': 'delete'}), name='subscribe'),
     path('', include(router.urls)),
 ]
