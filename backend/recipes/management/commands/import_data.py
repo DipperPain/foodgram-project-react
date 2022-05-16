@@ -6,7 +6,7 @@ from recipes.models import Ingredient, Tag
 
 
 class Command(BaseCommand):
-    help = 'импорт фикстур из директории: data'
+    help = 'импорт  из директории: data'
 
     def handle(self, *args, **options):
         # import Ingredient model
