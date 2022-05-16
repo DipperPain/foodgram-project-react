@@ -68,6 +68,7 @@ jobs:
             sudo docker-compose down
             sudo docker-compose rm
             y
+            
             rm .env
             touch .env
             echo SECRET_KEY='${{ secrets.SECRET_KEY }}' >> .env  
