@@ -14,6 +14,7 @@ class Command(BaseCommand):
         with open(path, 'r', newline='', encoding='utf-8') as data:
             result = csv.DictReader(data, delimiter=',')
             for line in result:
+
                 try:
                     name = line['name']
                     measurement_unit = line['measurement_unit']
