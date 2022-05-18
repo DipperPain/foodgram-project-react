@@ -1,7 +1,7 @@
 import json
 import os
 
-from django.conf import settings
+from app import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError
 
