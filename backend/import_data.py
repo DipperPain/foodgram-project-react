@@ -1,13 +1,16 @@
 import json
 import os
 
-from app import settings
+from app import settings as myapp_defaults
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError
-
+from django.conf import settings
 from recipes.models import Ingredient
 
+
 DATA_ROOT = os.path.join(settings.BASE_DIR, 'data')
+if not settings.configured:
+    settings.configure(myapp_defaults, DEBUG=True)
 
 
 class Command(BaseCommand):
