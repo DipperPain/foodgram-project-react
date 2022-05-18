@@ -36,8 +36,8 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - static_value:/foodgram/static/
-      - media_value:/foodgram/media/
+      - static_value:/foodgram/backend_static/
+      - media_value:/foodgram/backend_media/
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs:/usr/share/nginx/html/api/docs/
     restart: always
