@@ -2,13 +2,20 @@ from django.contrib import admin
 
 from .models import (AmountIngredientForRecipe, Favorite, Ingredient,
                      Recipe, ShoppingCart, Tag)
+from import_export.admin import ImportExportModelAdmin
+from import_export import resources
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit')
-    list_filter = ('name',)
-    empty_value_display = '-пусто-'
+class IngredientResource(resources.ModelResource):
+    class Meta:
+        model = Ingredient
+
+
+class IngredientAdmin(ImportExportModelAdmin):
+    resource_class = IngredientResource
+
+
+admin.site.register(Ingredient, IngredientAdmin)
 
 
 @admin.register(Tag)
