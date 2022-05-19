@@ -42,22 +42,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeGetSerializer
         return RecipePostSerializer
 
-    @staticmethod
-    def post_method_for_actions(request, pk, serializers):
-        data = {'user': request.user.id, 'recipe': pk}
-        serializer = serializers(data=data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return HttpResponseRedirect(
-            redirect_to='/api/users/me/')
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
-    @staticmethod
-    def delete_method_for_actions(request, pk, model):
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
-        model_obj = get_object_or_404(model, user=user, recipe=recipe)
-        model_obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
 
     @action(detail=True, methods=["POST"],
             permission_classes=[IsAuthenticated])
