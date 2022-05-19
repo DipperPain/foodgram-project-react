@@ -48,7 +48,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return HttpResponseRedirect('/api/users/me/')
+        return HttpResponseRedirect('/')
 
     @staticmethod
     def delete_method_for_actions(request, pk, model):
