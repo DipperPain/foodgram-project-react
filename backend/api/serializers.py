@@ -117,7 +117,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(
-            author=self.context.get('request').user,
+            author=self.context['request'].user,
             **validated_data
         )
         self.create_ingredients_tags(recipe, ingredients, tags)
@@ -145,7 +145,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def to_representation(self, obj):
         data = super().to_representation(obj)
-        data["image"] = obj.image.url
+        data['image'] = obj.image.url
         return data
 
 
