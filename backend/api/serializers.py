@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.db import transaction
 from .converters import Base64ImageField
 from recipes.models import (
     AmountIngredientForRecipe, Favorite,
@@ -93,7 +93,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 class RecipePostSerializer(serializers.ModelSerializer):
     image = Base64ImageField(use_url=True, max_length=None)
     author = UserSerializer(read_only=True)
-    ingredients =  AmountIngredientForRecipePostSerializer(many=True)
+    ingredients = AmountIngredientForRecipePostSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
@@ -107,11 +107,12 @@ class RecipePostSerializer(serializers.ModelSerializer):
         )
 
     def create_bulk(self, recipe, ingredients_data):
-        AmountIngredientForRecipe.objects.bulk_create([AmountIngredientForRecipe(
-            ingredient=ingredient['ingredient'],
-            recipe=recipe,
-            amount=ingredient['amount']
-        ) for ingredient in ingredients_data])
+        AmountIngredientForRecipe.objects.bulk_create(
+            [AmountIngredientForRecipe(
+                ingredient=ingredient['ingredient'],
+                recipe=recipe,
+                amount=ingredient['amount']
+            ) for ingredient in ingredients_data])
 
     @transaction.atomic
     def create(self, validated_data):
