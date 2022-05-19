@@ -121,7 +121,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
             **validated_data
         )
         self.create_ingredients_tags(recipe, ingredients, tags)
-        return recipe
+        return validated_data
 
     def update(self, recipe, validated_data):
         recipe.tags.clear()
