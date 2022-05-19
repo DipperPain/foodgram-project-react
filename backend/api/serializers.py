@@ -91,61 +91,78 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 
 class RecipePostSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(use_url=True, max_length=None)
     author = UserSerializer(read_only=True)
-    ingredients = AmountIngredientForRecipePostSerializer(many=True)
+    ingredients =  AmountIngredientForRecipePostSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(), many=True)
-    image = Base64ImageField()
+        queryset=Tag.objects.all(), many=True
+    )
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
-        fields = ('id', 'author', 'ingredients', 'tags',
-                  'image', 'name', 'text', 'cooking_time')
-
-    @staticmethod
-    def create_ingredients_tags(recipe, ingredients, tags):
-        for ingredient in ingredients:
-            AmountIngredientForRecipe.objects.create(
-                recipe=recipe,
-                ingredient=ingredient['id'],
-                amount=ingredient['amount']
-            )
-        for tag in tags:
-            recipe.tags.add(tag)
-
-    def create(self, validated_data):
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(
-            author=self.context.get('request').user,
-            **validated_data
+        fields = (
+            'id', 'image', 'tags', 'author', 'ingredients',
+            'name', 'text', 'cooking_time'
         )
-        self.create_ingredients_tags(recipe, ingredients, tags)
+
+    def create_bulk(self, recipe, ingredients_data):
+        AmountIngredientForRecipe.objects.bulk_create([AmountIngredientForRecipe(
+            ingredient=ingredient['ingredient'],
+            recipe=recipe,
+            amount=ingredient['amount']
+        ) for ingredient in ingredients_data])
+
+    @transaction.atomic
+    def create(self, validated_data):
+        request = self.context.get('request')
+        ingredients_data = validated_data.pop('ingredients')
+        tags_data = validated_data.pop('tags')
+        recipe = Recipe.objects.create(author=request.user, **validated_data)
+        recipe.save()
+        recipe.tags.set(tags_data)
+        self.create_bulk(recipe, ingredients_data)
         return recipe
 
-    def update(self, recipe, validated_data):
-        recipe.tags.clear()
-        AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        self.create_ingredients_tags(recipe, ingredients, tags)
-        return super().update(recipe, validated_data)
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        ingredients_data = validated_data.pop('ingredients')
+        tags_data = validated_data.pop('tags')
+        AmountIngredientForRecipe.objects.filter(recipe=instance).delete()
+        self.create_bulk(instance, ingredients_data)
+        instance.name = validated_data.pop('name')
+        instance.text = validated_data.pop('text')
+        instance.cooking_time = validated_data.pop('cooking_time')
+        if validated_data.get('image') is not None:
+            instance.image = validated_data.pop('image')
+        instance.save()
+        instance.tags.set(tags_data)
+        return instance
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
-        ingredients_list = []
         for ingredient in ingredients:
-            ingredient_id = ingredient['id']
-            if ingredient_id in ingredients_list:
+            if int(ingredient['amount']) <= 0:
                 raise serializers.ValidationError({
-                    'ingredient': 'Повторяются ингредиенты!'
+                    'ingredients': ('Число игредиентов должно быть больше 0')
                 })
-            ingredients_list.append(ingredient_id)
         return data
 
-    def to_representation(self, obj):
-        data = super().to_representation(obj)
-        data["image"] = obj.image.url
+    def validate_cooking_time(self, data):
+        cooking_time = self.initial_data.get('cooking_time')
+        if int(cooking_time) <= 0:
+            raise serializers.ValidationError(
+                'Время приготовления должно быть больше 0'
+            )
+        return data
+
+    def to_representation(self, instance):
+        data = RecipeGetSerializer(
+            instance,
+            context={
+                'request': self.context.get('request')
+            }
+        ).data
         return data
 
 
