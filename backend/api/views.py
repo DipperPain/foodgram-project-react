@@ -106,3 +106,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'attachment;filename=shopping_cart.pdf'
         )
         return response
+
+    def create(self, model, user, pk):
+        if model.objects.filter(user=user, recipe__id=pk).exists():
+            return Response({
+                'errors': 'Рецепт уже добавлен в список'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        recipe = get_object_or_404(Recipe, id=pk)
+        model.objects.create(user=user, recipe=recipe)
+        serializer = RecipePostSerializer(recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
