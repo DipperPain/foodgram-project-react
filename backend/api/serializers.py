@@ -114,22 +114,17 @@ class RecipePostSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag)
 
     def create(self, validated_data):
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(
-            author=self.context.get('request').user,
-            **validated_data
-        )
-        self.create_ingredients_tags(recipe, ingredients, tags)
-        return recipe
+        saved = {}
+        saved['ingredients'] = validated_data.pop('ingredients')
+        saved['tags'] = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        return self.add_ingredients_and_tags(recipe, saved)
 
-    def update(self, recipe, validated_data):
-        recipe.tags.clear()
-        AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        self.create_ingredients_tags(recipe, ingredients, tags)
-        return super().update(recipe, validated_data)
+    def update(self, instance, validated_data):
+        instance.ingredients.clear()
+        instance.tags.clear()
+        instance = self.add_ingredients_and_tags(instance, validated_data)
+        return super().update(instance, validated_data)
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
