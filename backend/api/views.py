@@ -1,7 +1,8 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from requests import Response
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 
 from rest_framework.permissions import IsAuthenticated
@@ -44,6 +45,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+        return Response(status=status.HTTP_201_CREATED)
 
     def perform_update(self, serializer):
         serializer.save(author=self.request.user)
