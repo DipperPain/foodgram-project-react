@@ -65,7 +65,8 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-project
-            sudo docker-compose down
+            sudo docker-compose stop $(docker ps -a -q)
+            sudo docker-compose rm $(docker ps -a -q)
             sudo docker system prune -a
             rm .env
             touch .env
