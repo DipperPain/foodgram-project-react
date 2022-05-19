@@ -8,4 +8,4 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD gunicorn app.wsgi:application --bind 0.0.0.0:8000 --access-logfile FILE
+CMD gunicorn app.wsgi:application --bind 0.0.0.0:8000 --error-logfile /var/log/gunicorn/error.log
