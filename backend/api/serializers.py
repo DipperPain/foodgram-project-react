@@ -114,39 +114,22 @@ class RecipePostSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag)
 
     def create(self, validated_data):
-        """
-        Метод создания рецептов.
-        """
-        author = validated_data.get('author')
-        tags_data = validated_data.pop('tags')
-        name = validated_data.get('name')
-        image = validated_data.get('image')
-        text = validated_data.get('text')
-        cooking_time = validated_data.get('cooking_time')
-        ingredients = validated_data.pop('ingredientrecipes')
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(
-            author=author,
-            name=name,
-            image=image,
-            text=text,
-            cooking_time=cooking_time,
+            author=self.context.get('request').user,
+            **validated_data
         )
-        recipe = self.add_tags_and_ingredients(tags_data, ingredients, recipe)
+        self.create_ingredients_tags(recipe, ingredients, tags)
         return recipe
 
-    def update(self, instance, validated_data):
-        """
-        Метод редактирования рецептов.
-        """
-        tags_data = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredientrecipes')
-        Tag.objects.filter(recipe=instance).delete()
-        AmountIngredientForRecipe.objects.filter(recipe=instance).delete()
-        instance = self.add_tags_and_ingredients(
-            tags_data, ingredients, instance)
-        super().update(instance, validated_data)
-        instance.save()
-        return instance
+    def update(self, recipe, validated_data):
+        recipe.tags.clear()
+        AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        self.create_ingredients_tags(recipe, ingredients, tags)
+        return super().update(recipe, validated_data)
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
