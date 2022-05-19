@@ -147,18 +147,23 @@ DJOSER = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': '/path/to/django/debug.log',
+    'formatters': {
+        'default': {
+            'format': '[DJANGO] %(levelname)s %(asctime)s %(module)s %(name)s.%(funcName)s:%(lineno)s: %(message)s'
+            },
         },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+            }
     },
     'loggers': {
-        'django': {
-            'handlers': ['file'],
+        '*': {
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        },
+            }
     },
 }
