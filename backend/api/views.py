@@ -1,5 +1,5 @@
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -48,7 +48,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(status=status.HTTP_200_OK)
+        return HttpResponseRedirect('/api/users/me/')
 
     @staticmethod
     def delete_method_for_actions(request, pk, model):
