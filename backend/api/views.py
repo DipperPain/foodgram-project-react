@@ -48,7 +48,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = serializers(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
     @staticmethod
     def delete_method_for_actions(request, pk, model):
