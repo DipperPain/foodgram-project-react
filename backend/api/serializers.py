@@ -114,17 +114,39 @@ class RecipePostSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag)
 
     def create(self, validated_data):
-        saved = {}
-        saved['ingredients'] = validated_data.pop('ingredients')
-        saved['tags'] = validated_data.pop('tags')
-        recipe = Recipe.objects.create(**validated_data)
-        return self.add_ingredients_and_tags(recipe, saved)
+        """
+        Метод создания рецептов.
+        """
+        author = validated_data.get('author')
+        tags_data = validated_data.pop('tags')
+        name = validated_data.get('name')
+        image = validated_data.get('image')
+        text = validated_data.get('text')
+        cooking_time = validated_data.get('cooking_time')
+        ingredients = validated_data.pop('ingredientrecipes')
+        recipe = Recipe.objects.create(
+            author=author,
+            name=name,
+            image=image,
+            text=text,
+            cooking_time=cooking_time,
+        )
+        recipe = self.add_tags_and_ingredients(tags_data, ingredients, recipe)
+        return recipe
 
     def update(self, instance, validated_data):
-        instance.ingredients.clear()
-        instance.tags.clear()
-        instance = self.add_ingredients_and_tags(instance, validated_data)
-        return super().update(instance, validated_data)
+        """
+        Метод редактирования рецептов.
+        """
+        tags_data = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredientrecipes')
+        Tag.objects.filter(recipe=instance).delete()
+        AmountIngredientForRecipe.objects.filter(recipe=instance).delete()
+        instance = self.add_tags_and_ingredients(
+            tags_data, ingredients, instance)
+        super().update(instance, validated_data)
+        instance.save()
+        return instance
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
