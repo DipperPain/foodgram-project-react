@@ -1,12 +1,11 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from requests import Response
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.response import Response
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginator import PagePagination
@@ -43,12 +42,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeGetSerializer
         return RecipePostSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+    @staticmethod
+    def post_method_for_actions(request, pk, serializers):
+        data = {'user': request.user.id, 'recipe': pk}
+        serializer = serializers(data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(status=status.HTTP_201_CREATED)
 
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
+    @staticmethod
+    def delete_method_for_actions(request, pk, model):
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=pk)
+        model_obj = get_object_or_404(model, user=user, recipe=recipe)
+        model_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=["POST"],
             permission_classes=[IsAuthenticated])
