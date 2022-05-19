@@ -7,5 +7,5 @@ RUN /usr/local/bin/python -m pip install --upgrade pip
 RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . .
-CMD touch error.log
-CMD gunicorn app.wsgi:application --bind 0.0.0.0:8000 --error-logfile error.log
+CMD touch error
+CMD gunicorn app.wsgi:application --bind 0.0.0.0:8000 --error-logfile error
