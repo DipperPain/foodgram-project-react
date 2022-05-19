@@ -49,7 +49,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return HttpResponseRedirect(
-            redirect_to='http://backend:8000/api/recipes/')
+            redirect_to='/recipes/')
 
     @staticmethod
     def delete_method_for_actions(request, pk, model):
