@@ -70,6 +70,7 @@ jobs:
             y
             rm .env
             touch .env
+            mkdir /var/log/gunicorn
             touch /var/log/gunicorn/error.log
             echo SECRET_KEY='${{ secrets.SECRET_KEY }}' >> .env  
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env 
