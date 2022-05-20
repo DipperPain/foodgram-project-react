@@ -65,10 +65,8 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-project
-            sudo docker-compose stop $(docker ps -a -q)
-            sudo docker-compose rm $(docker ps -a -q)
-            y
-            sudo docker system prune -a 
+            sudo docker-compose down
+            sudo docker system prune -a
             y
             rm .env
             touch .env
@@ -80,9 +78,10 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d --build
+            sudo docker-compose run backend python manage.py makemigrations users
+            sudo docker-compose run backend python manage.py makemigrations
+            sudo docker-compose run backend python manage.py migrate
             sudo docker-compose run backend python manage.py collectstatic --no-input
-            
-
   telegram_message:
     name: Send telegram message
     runs-on: ubuntu-latest
