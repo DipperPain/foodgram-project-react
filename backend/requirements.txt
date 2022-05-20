@@ -55,3 +55,4 @@ urllib3==1.26.8
 value==0.1.0
 virtualenv==20.13.0
 webcolors==1.11.1
+django-debug-toolbar
