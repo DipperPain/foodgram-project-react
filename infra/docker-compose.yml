@@ -23,6 +23,7 @@ services:
       - ./.env
 
 
+
   frontend:
     image: dipperpain/foodgram_frontend:latest
     volumes:
@@ -42,6 +43,7 @@ services:
     restart: always
     depends_on:
       - frontend
+
 
 
 volumes:
