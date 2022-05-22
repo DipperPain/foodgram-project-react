@@ -105,12 +105,12 @@ class RecipePostSerializer(serializers.ModelSerializer):
     @staticmethod
     def create_ingredients_tags(recipe, ingredients, tags):
         for ingredient in ingredients:
-            count = AmountIngredientForRecipe.objects.create(
+            AmountIngredientForRecipe.objects.create(
                 ingredient=ingredient['id'],
                 amount=ingredient['amount'],
                 recipe=Recipe.objects.get(id=recipe.id)
             )
-            recipe.ingredients.add(count)
+            recipe.ingridients.add(ingredient)
         for tag in tags:
             recipe.tags.add(tag)
 
