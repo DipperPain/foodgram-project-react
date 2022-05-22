@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (AmountIngredientForRecipe, Favorite, Ingredient,
+from .models import (IngredientRecipe, Favorite, Ingredient,
                      Recipe, ShoppingCart, Tag)
 
 
@@ -18,7 +18,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class AmountIngredientForRecipeInLine(admin.TabularInline):
-    model = AmountIngredientForRecipe
+    model = IngredientRecipe
 
 
 @admin.register(Recipe)
@@ -34,7 +34,7 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorite.count()
 
 
-@admin.register(AmountIngredientForRecipe)
+@admin.register(IngredientRecipe)
 class AmountIngredientForRecipeAdmin(admin.ModelAdmin):
     list_display = (
         'recipe', 'ingredient', 'amount'
