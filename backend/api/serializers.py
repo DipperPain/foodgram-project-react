@@ -37,7 +37,7 @@ class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AmountIngredientForRecipe
-        fields = ('amount')
+        fields = ('amount',)
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
