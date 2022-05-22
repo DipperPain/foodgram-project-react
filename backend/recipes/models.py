@@ -37,8 +37,7 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     """ Recipe model."""
-    tags = models.ManyToManyField(
-        Tag, verbose_name='Теги', related_name='tag')
+    tags = models.ManyToManyField(Tag, verbose_name='Теги')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -81,12 +80,10 @@ class AmountIngredientForRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='amount',
         verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
         Ingredient,
-        related_name='amount',
         on_delete=models.CASCADE,
         verbose_name='Ингредиент'
     )
