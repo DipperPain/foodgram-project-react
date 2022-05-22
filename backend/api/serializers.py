@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.shortcuts import get_object_or_404
 from .converters import Base64ImageField
 from recipes.models import (
     AmountIngredientForRecipe, Favorite,
@@ -103,15 +103,17 @@ class RecipePostSerializer(serializers.ModelSerializer):
                   'image', 'name', 'text', 'cooking_time')
 
     @staticmethod
-    def create_ingredients_tags(recipe, ingredients, tags):
+    def create_ingredients_tags(instance, recipe, ingredients, tags):
         for ingredient in ingredients:
-            AmountIngredientForRecipe.objects.create(
-                recipe=recipe,
-                ingredient=ingredient['id'],
-                amount=ingredient['amount']
+            count, _ = AmountIngredientForRecipe.objects.get_or_create(
+                ingredient=get_object_or_404(Ingredient, pk=ingredient['id']),
+                amount=ingredient['amount'],
             )
+            instance.ingredients.add(count)
+
         for tag in tags:
-            recipe.tags.add(tag)
+            instance.recipe.tags.add(tag)
+        return instance
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
