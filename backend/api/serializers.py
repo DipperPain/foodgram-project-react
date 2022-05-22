@@ -105,7 +105,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
     @staticmethod
     def create_ingredients_tags(self, instance, validated_data):
         ingredients, tags = (
-            validated_data.get('ingredients'), validated_data.get('tags')
+            validated_data.pop('ingredients'), validated_data.pop('tags')
         )
         for ingredient in ingredients:
             count, _ = AmountIngredientForRecipe.objects.get_or_create(
