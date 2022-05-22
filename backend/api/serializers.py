@@ -36,6 +36,11 @@ class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
         model = AmountIngredientForRecipe
         fields = ('id', 'amount')
 
+    def get_ingredient_items(self, obj):
+        query = Ingredient.objects.filter(id=obj.id)
+        serializer = IngredientSerializer(query, many=True)
+        return serializer.data
+
 
 class RecipeGetSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
