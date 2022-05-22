@@ -102,25 +102,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'ingredients', 'tags',
                   'image', 'name', 'text', 'cooking_time')
 
-
-    def create(self, validated_data):
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(
-            author=self.context.get('request').user,
-            **validated_data
-        )
-        self.create_ingredients_tags(recipe, ingredients, tags)
-        return recipe
-
-    def update(self, recipe, validated_data):
-        recipe.tags.clear()
-        AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        self.create_ingredients_tags(recipe, ingredients, tags)
-        return super().update(recipe, validated_data)
-
     def validate(self, data):
         ingredients = data['ingredients']
         ingredients_list = []
@@ -156,6 +137,24 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 'cooking_time': 'Время приготовления должно быть больше 0!'
             })
         return data
+
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(
+            author=self.context.get('request').user,
+            **validated_data
+        )
+        self.create_ingredients_tags(recipe, ingredients, tags)
+        return recipe
+
+    def update(self, recipe, validated_data):
+        recipe.tags.clear()
+        AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        self.create_ingredients_tags(recipe, ingredients, tags)
+        return super().update(recipe, validated_data)
 
     def to_representation(self, obj):
         data = super().to_representation(obj)
