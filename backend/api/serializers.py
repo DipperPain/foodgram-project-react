@@ -124,7 +124,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(
             author=self.context.get('request').user,
             **validated_data)
-        return self.create_ingredients_tags(recipe, saved)
+        return self.create_ingredients_tags(recipe, saved, validated_data)
 
     def update(self, instance, validated_data):
         instance.ingredients.clear()
