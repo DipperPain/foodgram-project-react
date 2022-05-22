@@ -95,7 +95,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
     ingredients = AmountIngredientForRecipePostSerializer(
         many=True, source='amount_set')
     tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(), many=True)
+        queryset=Tag.objects.all(), many=True, source='tag_set')
     image = Base64ImageField()
 
     class Meta:
