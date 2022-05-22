@@ -33,6 +33,7 @@ class AmountIngredientForRecipeGetSerializer(serializers.ModelSerializer):
 
 class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField(min_value=1)
 
     class Meta:
         model = AmountIngredientForRecipe
@@ -91,8 +92,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 class RecipePostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    ingredients = AmountIngredientForRecipePostSerializer(
-        source='amount', many=True)
+    ingredients = AmountIngredientForRecipePostSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True)
     image = Base64ImageField()
@@ -108,14 +108,14 @@ class RecipePostSerializer(serializers.ModelSerializer):
             AmountIngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
-                amount=ingredient.amountingredientforrecipe_set.all()
+                amount=ingredient['amount']
             )
         for tag in tags:
             recipe.tags.add(tag)
 
     def create(self, validated_data):
-        ingredients = validated_data.get('ingredients')
-        tags = validated_data.get('tags')
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(
             author=self.context.get('request').user,
             **validated_data
@@ -126,8 +126,8 @@ class RecipePostSerializer(serializers.ModelSerializer):
     def update(self, recipe, validated_data):
         recipe.tags.clear()
         AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
-        ingredients = validated_data.get('ingredients')
-        tags = validated_data.get('tags')
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
         self.create_ingredients_tags(recipe, ingredients, tags)
         return super().update(recipe, validated_data)
 
