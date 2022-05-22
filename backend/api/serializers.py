@@ -138,6 +138,11 @@ class RecipePostSerializer(serializers.ModelSerializer):
             })
         return data
 
+    @staticmethod
+    def create_tags(tags, recipe):
+        for tag in tags:
+            recipe.tags.add(tag)
+
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
