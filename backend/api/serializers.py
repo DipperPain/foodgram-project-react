@@ -32,7 +32,9 @@ class AmountIngredientForRecipeGetSerializer(serializers.ModelSerializer):
 
 
 class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all(),
+        many=True)
     amount = serializers.IntegerField(min_value=1)
 
     class Meta:
@@ -105,11 +107,12 @@ class RecipePostSerializer(serializers.ModelSerializer):
     @staticmethod
     def create_ingredients_tags(recipe, ingredients, tags):
         for ingredient in ingredients:
-            AmountIngredientForRecipe.objects.create(
+            ingredientrecipe = AmountIngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
                 amount=ingredient['amount']
             )
+            ingredientrecipe.amount = ingredient['amount']
         for tag in tags:
             recipe.tags.add(tag)
 
