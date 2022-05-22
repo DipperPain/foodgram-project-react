@@ -106,7 +106,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
     def create_ingredients_tags(recipe, ingredients, tags):
         for ingredient in ingredients:
             ingredientrecipe = AmountIngredientForRecipe.objects.create(
-                ingredient_id=ingredient['ingredient']['id'],
+                ingredient_id=ingredient['id'],
                 recipe=recipe)
             ingredientrecipe.amount = ingredient['amount']
             ingredientrecipe.save()
