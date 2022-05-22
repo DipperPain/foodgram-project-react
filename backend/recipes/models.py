@@ -80,12 +80,12 @@ class AmountIngredientForRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredientrecipes',
+        related_name='amount',
         verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
         Ingredient,
-        related_name='ingredientrecipes',
+        related_name='amount',
         on_delete=models.CASCADE,
         verbose_name='Ингредиент'
     )
