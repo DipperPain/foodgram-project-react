@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from django.shortcuts import get_object_or_404
+
 from .converters import Base64ImageField
 from recipes.models import (
-    IngredientRecipe, Favorite,
+    AmountIngredientForRecipe, Favorite,
     Ingredient, Recipe, ShoppingCart, Tag)
 from users.serializers import UserSerializer
 
@@ -27,17 +27,16 @@ class AmountIngredientForRecipeGetSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='ingredient.id', read_only=True)
 
     class Meta:
-        model = IngredientRecipe
+        model = AmountIngredientForRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all())
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(min_value=1)
 
     class Meta:
-        model = IngredientRecipe
+        model = AmountIngredientForRecipe
         fields = ('id', 'amount')
 
 
@@ -65,7 +64,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, recipe):
         return AmountIngredientForRecipeGetSerializer(
-            IngredientRecipe.objects.filter(recipe=recipe),
+            AmountIngredientForRecipe.objects.filter(recipe=recipe),
             many=True
         ).data
 
@@ -106,14 +105,13 @@ class RecipePostSerializer(serializers.ModelSerializer):
     @staticmethod
     def create_ingredients_tags(recipe, ingredients, tags):
         for ingredient in ingredients:
-            count_of_ingredient, _ = IngredientRecipe.objects.get_or_create(
-                ingredient=get_object_or_404(Ingredient, pk=ingredient['id']),
-                amount=ingredient['amount'],
+            AmountIngredientForRecipe.objects.create(
+                recipe=recipe,
+                ingredient=ingredient['id'],
+                amount=ingredient['amount']
             )
-            ingredients.add(count_of_ingredient)
         for tag in tags:
             recipe.tags.add(tag)
-        return recipe
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
@@ -127,7 +125,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def update(self, recipe, validated_data):
         recipe.tags.clear()
-        IngredientRecipe.objects.filter(recipe=recipe).delete()
+        AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         self.create_ingredients_tags(recipe, ingredients, tags)
