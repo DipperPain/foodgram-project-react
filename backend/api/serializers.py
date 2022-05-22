@@ -103,35 +103,32 @@ class RecipePostSerializer(serializers.ModelSerializer):
                   'image', 'name', 'text', 'cooking_time')
 
     @staticmethod
-    def create_ingredients_tags(instance, recipe, ingredients, tags):
+    def create_ingredients_tags(self, instance, validated_data):
+        ingredients, tags = (
+            validated_data.pop('ingredients'), validated_data.pop('tags')
+        )
         for ingredient in ingredients:
             count, _ = AmountIngredientForRecipe.objects.get_or_create(
                 ingredient=get_object_or_404(Ingredient, pk=ingredient['id']),
                 amount=ingredient['amount'],
             )
             instance.ingredients.add(count)
-
         for tag in tags:
-            instance.recipe.tags.add(tag)
+            instance.tags.add(tag)
         return instance
 
     def create(self, validated_data):
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(
-            author=self.context.get('request').user,
-            **validated_data
-        )
-        self.create_ingredients_tags(recipe, ingredients, tags)
-        return recipe
+        saved = {}
+        saved['ingredients'] = validated_data.pop('ingredients')
+        saved['tags'] = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        return self.create_ingredients_tags(recipe, saved)
 
-    def update(self, recipe, validated_data):
-        recipe.tags.clear()
-        AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        self.create_ingredients_tags(recipe, ingredients, tags)
-        return super().update(recipe, validated_data)
+    def update(self, instance, validated_data):
+        instance.ingredients.clear()
+        instance.tags.clear()
+        instance = self.create_ingredients_tags(instance, validated_data)
+        return super().update(instance, validated_data)
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
