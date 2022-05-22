@@ -83,7 +83,7 @@ jobs:
             sudo docker-compose run backend python manage.py makemigrations
             sudo docker-compose run backend python manage.py migrate
             sudo docker-compose run backend python manage.py collectstatic --no-input
-            sudo docker-compose run backend python manage.py import_data ingredients.json
+            sudo docker-compose run backend python manage.py import_data i.json
 
   telegram_message:
     name: Send telegram message
