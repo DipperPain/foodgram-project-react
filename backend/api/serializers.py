@@ -36,8 +36,8 @@ class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
         model = AmountIngredientForRecipe
         fields = ('id', 'amount')
 
-    def get_ingredient_items(self, obj):
-        query = Ingredient.objects.filter(id=obj.id)
+    def get_ingredient_items(self):
+        query = Ingredient.objects.all()
         serializer = IngredientSerializer(query, many=True)
         return serializer.data
 
