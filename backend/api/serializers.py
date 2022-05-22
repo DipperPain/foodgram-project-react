@@ -127,7 +127,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         recipe.tags.clear()
         AmountIngredientForRecipe.objects.filter(recipe=recipe).delete()
         ingredients = validated_data.get('ingredients')
-        tags = validated_data.('tags')
+        tags = validated_data.get('tags')
         self.create_ingredients_tags(recipe, ingredients, tags)
         return super().update(recipe, validated_data)
 
