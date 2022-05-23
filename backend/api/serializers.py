@@ -95,7 +95,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 class RecipePostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     ingredients = AmountIngredientForRecipePostSerializer(
-        source='amounts_ingredient',many=True)
+        source='amounts_ingredient', many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True)
     image = Base64ImageField()
@@ -111,7 +111,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
             AmountIngredientForRecipe.objects.create(
                 ingredient=ingredient['id'],
                 recipe=recipe,
-                amount=)
+                amount=ingredient['amount'])
 
         for tag in tags:
             recipe.tags.add(tag)
