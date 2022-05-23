@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.shortcuts import get_object_or_404
 from .converters import Base64ImageField
 from recipes.models import (
     AmountIngredientForRecipe, Favorite,
@@ -32,7 +32,7 @@ class AmountIngredientForRecipeGetSerializer(serializers.ModelSerializer):
 
 
 class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(source='amount')
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(min_value=1)
 
     class Meta:
@@ -105,13 +105,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
     @staticmethod
     def create_ingredients_tags(recipe, ingredients_, tags):
         for ingredient in ingredients_:
-            amount = ingredient.get('amount')
-            if not amount:
-                amount = 0
             AmountIngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
-                amount=amount
+                amount=ingredient['amount']
             )
         for tag in tags:
             recipe.tags.add(tag)
@@ -138,12 +135,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
         ingredients = self.initial_data.get('ingredients')
         ingredients_list = []
         for ingredient in ingredients:
-            ingredient_id = ingredient['id']
-            if ingredient_id in ingredients_list:
-                raise serializers.ValidationError({
-                    'ingredient': 'Повторяются ингредиенты!'
-                })
-            ingredients_list.append(ingredient_id)
+            ingredient = get_object_or_404(
+                Ingredient, id=ingredient['id'])
+
+            ingredients_list.append(ingredient)
         return data
 
     def to_representation(self, obj):
