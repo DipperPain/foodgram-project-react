@@ -111,6 +111,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 amount=serializers.IntegerField(
                     min_value=1, source='amounts.amount')
             )
+
         for tag in tags:
             recipe.tags.add(tag)
 
