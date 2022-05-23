@@ -1,4 +1,3 @@
-from imp import source_from_cache
 from rest_framework import serializers
 
 from .converters import Base64ImageField
