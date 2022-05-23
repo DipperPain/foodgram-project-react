@@ -32,8 +32,7 @@ class AmountIngredientForRecipeGetSerializer(serializers.ModelSerializer):
 
 
 class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=AmountIngredientForRecipe.objects.all())
+    id = serializers.PrimaryKeyRelatedField(source='amount')
     amount = serializers.IntegerField(min_value=1)
 
     class Meta:
