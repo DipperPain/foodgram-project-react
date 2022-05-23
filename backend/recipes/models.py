@@ -94,7 +94,7 @@ class AmountIngredientForRecipe(models.Model):
             1,
             message='Минимальное количество: 1 единица'
         )],
-        verbose_name='Количество ингредиента'
+        verbose_name='amount'
     )
 
     class Meta:
