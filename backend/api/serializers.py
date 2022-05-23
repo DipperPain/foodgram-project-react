@@ -107,7 +107,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             ingredient_ = Ingredient.objects.get(
                 id=ingredient['id'])
-            amount = ingredient_.ingredientrecipeх
+            amount = ingredient_.ingredientrecipe.get('amount')
             AmountIngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
