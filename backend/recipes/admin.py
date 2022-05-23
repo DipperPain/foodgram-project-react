@@ -37,9 +37,9 @@ class RecipeAdmin(admin.ModelAdmin):
 @admin.register(AmountIngredientForRecipe)
 class AmountIngredientForRecipeAdmin(admin.ModelAdmin):
     list_display = (
-        'recipe', 'ingredient', 'amount'
+        'ingredient', 'amount'
     )
-    list_filter = ('recipe', 'ingredient')
+    list_filter = ('ingredient')
     empty_value_display = '-пусто-'
 
 
