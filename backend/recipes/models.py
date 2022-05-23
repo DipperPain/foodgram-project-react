@@ -80,13 +80,13 @@ class AmountIngredientForRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredientrecipe',
+        related_name='amount',
         verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredientrecipe',
+        related_name='amount',
         verbose_name='Ингредиент'
     )
     amount = models.PositiveSmallIntegerField(
@@ -94,7 +94,7 @@ class AmountIngredientForRecipe(models.Model):
             1,
             message='Минимальное количество: 1 единица'
         )],
-        verbose_name='amount'
+        verbose_name='Amount'
     )
 
     class Meta:
