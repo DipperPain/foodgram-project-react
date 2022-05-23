@@ -108,7 +108,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
             AmountIngredientForRecipe.objects.create(
                 ingredient=ingredient['id'],
                 recipe=recipe,
-                **ingredients
+                **ingredient
             )
         for tag in tags:
             recipe.tags.add(tag)
