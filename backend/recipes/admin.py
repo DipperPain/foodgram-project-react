@@ -13,7 +13,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color')
+    list_display = ('name', 'color',)
     empty_value_display = '-пусто-'
 
 
@@ -37,7 +37,7 @@ class RecipeAdmin(admin.ModelAdmin):
 @admin.register(AmountIngredientForRecipe)
 class AmountIngredientForRecipeAdmin(admin.ModelAdmin):
     list_display = (
-        'ingredient', 'amount'
+        'ingredient', 'amount',
     )
     list_filter = ('ingredient')
     empty_value_display = '-пусто-'
