@@ -1,3 +1,4 @@
+import django
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from .converters import Base64ImageField
@@ -103,8 +104,8 @@ class RecipePostSerializer(serializers.ModelSerializer):
                   'image', 'name', 'text', 'cooking_time')
 
     @staticmethod
-    def create_ingredients_tags(recipe, ingredients_, tags):
-        for ingredient in ingredients_:
+    def create_ingredients_tags(recipe, ingredients, tags):
+        for ingredient in ingredients:
             AmountIngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
@@ -114,13 +115,13 @@ class RecipePostSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag)
 
     def create(self, validated_data):
-        ingredients_ = validated_data.pop('ingredients')
+        ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(
             author=self.context.get('request').user,
             **validated_data
         )
-        self.create_ingredients_tags(recipe, ingredients_, tags)
+        self.create_ingredients_tags(recipe, ingredients, tags)
         return recipe
 
     def update(self, recipe, validated_data):
@@ -137,7 +138,9 @@ class RecipePostSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             ingredient = get_object_or_404(
                 Ingredient, id=ingredient['id'])
-
+            if ingredient in ingredients_list:
+                raise serializers.ValidationError('Ингридиенты должны '
+                                                  'быть уникальными')
             ingredients_list.append(ingredient)
         return data
 
