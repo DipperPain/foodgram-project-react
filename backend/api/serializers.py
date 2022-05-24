@@ -7,6 +7,7 @@ from recipes.models import (
 from users.serializers import UserSerializer
 from django.db.models import F
 
+
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
@@ -103,7 +104,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'author', 'ingredients', 'tags',
                   'image', 'name', 'text', 'cooking_time')
-
 
     def get_ingredients(self, obj):
         return obj.ingredients.values(
