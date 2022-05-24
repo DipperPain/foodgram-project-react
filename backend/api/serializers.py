@@ -132,7 +132,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
             **validated_data
         )
         self.create_ingredients_tags(
-            recipe, ingredients=ingredients, tags=tags)
+            instance=recipe, ingredients=ingredients, tags=tags)
         return recipe
 
     def update(self, recipe, validated_data):
