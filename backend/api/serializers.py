@@ -109,7 +109,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
             AmountIngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
-                amount=amounts[i]
+                amount=int(amounts[i])
             )
             i = + 1
         for tag in tags:
