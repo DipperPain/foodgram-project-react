@@ -111,7 +111,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         )
 
     @staticmethod
-    def create_ingredients_tags(self, instance, **validated_data):
+    def create_ingredients_tags(instance, **validated_data):
         ingredients = validated_data['ingredients']
         tags = validated_data['tags']
         for tag in tags:
