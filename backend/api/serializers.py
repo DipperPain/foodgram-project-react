@@ -38,7 +38,7 @@ class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
         source='amounts_ingredient.amount')
 
     class Meta:
-        model = AmountIngredientForRecipe
+        model = Ingredient
         fields = ('id', 'amount')
 
 
