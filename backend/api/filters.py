@@ -12,7 +12,7 @@ class TagFavoritShopingFilter(filters.FilterSet):
 
     def get_is_favorited(self, queryset, value, name):
         if value and not self.request.user.is_anonymous:
-            return queryset.filter(favorited__user=self.request.user)
+            return queryset.filter(favorites__user=self.request.user)
         return queryset
 
     def get_is_in_shopping_cart(self, queryset, value, name):
