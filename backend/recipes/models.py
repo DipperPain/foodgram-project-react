@@ -48,7 +48,7 @@ class Recipe(models.Model):
         Ingredient,
         through='AmountIngredientForRecipe',
         through_fields=('recipe', 'ingredient'),
-        related_name='ingredients',
+        related_name='recipes',
         verbose_name='Ингредиенты'
     )
     name = models.CharField(
