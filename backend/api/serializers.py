@@ -4,9 +4,9 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-
 from recipes.models import (
-    Ingredient, IngredientAmount, Recipe, Tag, Favorite)
+    Ingredient, IngredientAmount,
+    Recipe, Tag, Cart, Favorite)
 from users.models import Follow
 
 User = get_user_model()
@@ -92,19 +92,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return obj.ingredients.values(
             'id', 'name', 'measurement_unit', amount=F('recipe__amount')
         )
-
-    def get_is_favorited(self, recipe):
-        if self.context.get('request').user.is_anonymous:
-            return False
-        return Favorite.objects.filter(
-            user=self.context.get('request').user,
-            recipe=recipe
-        ).exists()
-
-    def to_representation(self, obj):
-        data = super().to_representation(obj)
-        data["image"] = obj.image.url
-        return data
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -240,6 +227,26 @@ class FavoriteRecipesSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'status': 'Уже добавлен'
             })
+        return data
+
+    def to_representation(self, instance):
+        return RecipeViewSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')}
+        ).data
+
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        if Cart.objects.filter(
+                user=self.context['request'].user,
+                recipe=data['recipe']
+        ):
+            raise serializers.ValidationError('Уже добавлен')
         return data
 
     def to_representation(self, instance):
