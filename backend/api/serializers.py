@@ -70,7 +70,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
     ingredients = serializers.SerializerMethodField()
-    is_favorited = serializers.BooleanField(default=False)
+    is_favorited = serializers.SerializerMethodField(
+        method_name='get_is_favorited',
+        read_only=True
+    )
     is_in_shopping_cart = serializers.BooleanField(default=False)
 
     class Meta:
@@ -92,6 +95,19 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return obj.ingredients.values(
             'id', 'name', 'measurement_unit', amount=F('recipe__amount')
         )
+
+    def get_is_favorited(self, recipe):
+        if self.context.get('request').user.is_anonymous:
+            return False
+        return Favorite.objects.filter(
+            user=self.context.get('request').user,
+            recipe=recipe
+        ).exists()
+
+    def to_representation(self, obj):
+        data = super().to_representation(obj)
+        data["image"] = obj.image.url
+        return data
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
