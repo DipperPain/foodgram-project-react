@@ -93,6 +93,19 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'id', 'name', 'measurement_unit', amount=F('recipe__amount')
         )
 
+    def get_is_favorited(self, recipe):
+        if self.context.get('request').user.is_anonymous:
+            return False
+        return Favorite.objects.filter(
+            user=self.context.get('request').user,
+            recipe=recipe
+        ).exists()
+
+    def to_representation(self, obj):
+        data = super().to_representation(obj)
+        data["image"] = obj.image.url
+        return data
+
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
