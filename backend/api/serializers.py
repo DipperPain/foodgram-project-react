@@ -33,7 +33,7 @@ class AmountIngredientForRecipeGetSerializer(serializers.ModelSerializer):
 
 class AmountIngredientForRecipePostSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(min_value=1)
 
     class Meta:
         model = AmountIngredientForRecipe
@@ -92,7 +92,10 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 class RecipePostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    ingredients = AmountIngredientForRecipePostSerializer(many=True)
+    ingredients = AmountIngredientForRecipePostSerializer(
+        source='amountingredientforrecipe_set',
+        many=True,
+        read_only=True,)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True)
     image = Base64ImageField()
@@ -103,29 +106,24 @@ class RecipePostSerializer(serializers.ModelSerializer):
                   'image', 'name', 'text', 'cooking_time')
 
     @staticmethod
-    def create_ingredients_tags(recipe, ingredients, tags, amounts):
-        i = 0
+    def create_ingredients_tags(recipe, ingredients, tags):
         for ingredient in ingredients:
             AmountIngredientForRecipe.objects.create(
                 recipe=recipe,
                 ingredient=ingredient['id'],
-                amount=int(amounts[i])
+                amount=ingredient['amount']
             )
-            i = + 1
         for tag in tags:
             recipe.tags.add(tag)
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
-        amounts = ingredients['amounts']
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(
             author=self.context.get('request').user,
             **validated_data
         )
-        self.create_ingredients_tags(
-            recipe, ingredients, tags,
-            amounts)
+        self.create_ingredients_tags(recipe, ingredients, tags)
         return recipe
 
     def update(self, recipe, validated_data):
@@ -150,7 +148,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def to_representation(self, obj):
         data = super().to_representation(obj)
-        data['image'] = obj.image.url
+        data["image"] = obj.image.url
         return data
 
 
