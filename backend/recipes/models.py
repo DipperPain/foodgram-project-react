@@ -48,7 +48,7 @@ class Recipe(models.Model):
         Ingredient,
         through='AmountIngredientForRecipe',
         through_fields=('recipe', 'ingredient'),
-        related_name='recipes',
+        related_name='ingredients',
         verbose_name='Ингредиенты'
     )
     name = models.CharField(
@@ -101,7 +101,7 @@ class AmountIngredientForRecipe(models.Model):
         constraints = (
             models.UniqueConstraint(
                 fields=['ingredient', 'recipe'],
-                name='unique ingredients recipe'
+                name='unique_ingredient'
             ),
         )
 
