@@ -14,7 +14,8 @@ from api.pagination import LimitPageNumberPagination
 from api.permissions import AdminOrReadOnly, AdminUserOrReadOnly
 from api.serializers import (FollowSerializer, IngredientSerializer,
                              RecipeReadSerializer, RecipeWriteSerializer,
-                             ShortRecipeSerializer, TagSerializer)
+                             ShortRecipeSerializer, TagSerializer,
+                             FavoriteRecipesSerializer)
 from users.models import Follow
 
 User = get_user_model()
@@ -121,14 +122,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         return queryset
 
-    @action(detail=True, methods=['post'],
+    @action(detail=True, methods=["POST"],
             permission_classes=[IsAuthenticated])
-    def favorite(self, request, pk=None):
-        return self.add_obj(Favorite, request.user, pk)
+    def favorite(self, request, pk):
+        return self.post_method_for_actions(
+            request=request, pk=pk, serializers=FavoriteRecipesSerializer)
 
     @favorite.mapping.delete
-    def del_from_favorite(self, request, pk=None):
-        return self.delete_obj(Favorite, request.user, pk)
+    def delete_favorite(self, request, pk):
+        return self.delete_method_for_actions(
+            request=request, pk=pk, model=Favorite)
 
     @action(detail=True, methods=['post'],
             permission_classes=[IsAuthenticated])

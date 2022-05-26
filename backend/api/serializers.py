@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from recipes.models import (
-    Ingredient, IngredientAmount, Recipe, Tag)
+    Ingredient, IngredientAmount, Recipe, Tag, Favorite)
 from users.models import Follow
 
 User = get_user_model()
@@ -206,3 +206,31 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
+
+
+class RecipeViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class FavoriteRecipesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        if Favorite.objects.filter(
+                user=self.context.get('request').user,
+                recipe=data['recipe']
+        ).exists():
+            raise serializers.ValidationError({
+                'status': 'Уже добавлен'
+            })
+        return data
+
+    def to_representation(self, instance):
+        return RecipeViewSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')}
+        ).data
