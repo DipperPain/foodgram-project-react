@@ -1,57 +1,41 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, register
 
-from .models import (AmountIngredientForRecipe, Favorite, Ingredient,
-                     Recipe, ShoppingCart, Tag)
+from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
+@register(Tag)
+class TagAdmin(ModelAdmin):
+    list_display = ('name', 'slug', 'color')
+
+
+@register(Ingredient)
+class IngredientAdmin(ModelAdmin):
     list_display = ('name', 'measurement_unit')
     list_filter = ('name',)
-    empty_value_display = '-пусто-'
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color')
-    empty_value_display = '-пусто-'
-
-
-class AmountIngredientForRecipeInLine(admin.TabularInline):
-    model = AmountIngredientForRecipe
-
-
-@admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
+@register(Recipe)
+class RecipeAdmin(ModelAdmin):
     list_display = ('name', 'author')
-    readonly_fields = ('number_additions_to_favorites',)
     list_filter = ('author', 'name', 'tags')
-    list_per_page = 20
-    inlines = [AmountIngredientForRecipeInLine]
-    empty_value_display = '-пусто-'
+    readonly_fields = ('count_favorites',)
 
-    def number_additions_to_favorites(self, obj):
-        return obj.favorite.count()
+    def count_favorites(self, obj):
+        return obj.favorites.count()
 
-
-@admin.register(AmountIngredientForRecipe)
-class AmountIngredientForRecipeAdmin(admin.ModelAdmin):
-    list_display = (
-        'recipe', 'ingredient', 'amount'
-    )
-    list_filter = ('recipe', 'ingredient')
-    empty_value_display = '-пусто-'
+    count_favorites.short_description = 'Число добавлений в избранное'
 
 
-@admin.register(Favorite)
-class FavoriteRecipeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
-    list_filter = ('user', 'recipe')
-    empty_value_display = '-пусто-'
+@register(IngredientAmount)
+class IngredientAmountAdmin(ModelAdmin):
+    pass
 
 
-@admin.register(ShoppingCart)
-class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
-    list_filter = ('user', 'recipe')
-    empty_value_display = '-пусто-'
+@register(Favorite)
+class FavoriteAdmin(ModelAdmin):
+    pass
+
+
+@register(Cart)
+class CartAdmin(ModelAdmin):
+    pass

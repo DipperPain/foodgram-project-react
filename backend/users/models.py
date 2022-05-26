@@ -1,49 +1,30 @@
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.contrib.auth import get_user_model
 from django.db import models
 
-
-class User(AbstractUser):
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-        validators=[
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Логин должен содержать ТОЛЬКО:'
-                        ' буквы/цифры(с учетом регистра),'
-                        ' а также символы: .@+-',
-            ),
-        ]
-    )
-    email = models.EmailField(max_length=254, unique=True)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
-
-    class Meta:
-        ordering = ['username']
-
-    def __str__(self):
-        return self.username
+User = get_user_model()
 
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='follower'
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='Подписчик',
     )
-    following = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='following'
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Автор',
     )
 
     class Meta:
-        constraints = (
+        ordering = ['-id']
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
             models.UniqueConstraint(
-                fields=['user', 'following'],
-                name='follow'
-            ),
-        )
-
-    def __str__(self):
-        return f'{self.username} follow for {self.following}'
+                fields=['user', 'author'],
+                name='unique_follow',
+            )
+        ]
